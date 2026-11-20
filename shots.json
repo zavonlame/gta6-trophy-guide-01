@@ -1,5 +1,1 @@
-[
-  { "file": "1-checklist.jpg", "path": "/", "viewport": { "width": 1280, "height": 800 } },
-  { "file": "2-silver.jpg", "path": "/", "grade": "silver", "viewport": { "width": 1280, "height": 800 } },
-  { "file": "3-bronze.jpg", "path": "/", "grade": "bronze", "scroll": 1400, "viewport": { "width": 1280, "height": 800 } }
-]
+{"height":800,"note":"How the four screenshots in screenshots/ were taken: app/ served from its own files on localhost, progress seeded to 13 of 55 earned, captured in desktop Chrome at 1280x800, JPEG quality 82. Each shot is a real render of the app's own code, never edited.","quality":82,"shots":[{"action":"Open the guide for The Shootist (id 17) so its guide and sources show beside the checklist.","file":"1-checklist.jpg","seed_earned":13,"view":"tracker"},{"action":"Show the six-stage roadmap to the platinum.","file":"2-roadmap.jpg","seed_earned":13,"view":"roadmap"},{"action":"Show the six trophies treated as missable, each with its warning.","file":"3-missables.jpg","seed_earned":13,"view":"missables"},{"action":"Turn on Hide story spoilers so the story trophies show as hidden until earned.","file":"4-spoiler.jpg","seed_earned":13,"spoiler":true,"view":"tracker"}],"width":1280}
