@@ -3,23 +3,91 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>GTA VI trophy checklist</title>
+<meta name="description" content="Leonida Platinum: an offline tracker and guide for all 55 Grand Theft Auto VI trophies on PlayStation 5 — checklist, roadmap, missables and a cited guide for each trophy.">
+<title>Leonida Platinum — GTA 6 Trophy Guide &amp; Tracker</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header>
-  <h1>GTA VI trophy checklist</h1>
-  <p id="progress">0 of 55 earned</p>
+<header class="masthead">
+  <div class="masthead-inner">
+    <p class="eyebrow">Grand Theft Auto VI &middot; PlayStation 5 &middot; 55 trophies</p>
+    <h1>Leonida Platinum</h1>
+    <p class="tagline">Every trophy, one checklist. A roadmap to the platinum, the missables flagged, and a cited guide for each trophy — all offline, in your browser.</p>
+    <div class="progress" role="status" aria-live="polite">
+      <div class="progress-line"><span id="progressText">0 of 55 earned</span><span id="gradeCounts"></span></div>
+      <div class="progress-track"><div id="progressBar" class="progress-fill" style="width:0%"></div></div>
+    </div>
+  </div>
 </header>
-<div class="controls">
-  <label>Grade <select id="grade"><option value="all">All</option><option value="platinum">Platinum</option><option value="gold">Gold</option><option value="silver">Silver</option><option value="bronze">Bronze</option></select></label>
-  <button id="export" type="button">Export progress</button>
-  <label class="import">Import progress <input id="import" type="file" accept="application/json"></label>
-</div>
-<table>
-  <thead><tr><th>Earned</th><th>Trophy</th><th>Grade</th><th>How to get it</th></tr></thead>
-  <tbody id="rows"></tbody>
-</table>
+<noscript><p style="padding:16px 20px">This guide needs JavaScript: the checklist, filters and guide pane are all built in the browser. Enable JavaScript and reload.</p></noscript>
+<nav class="tabs" aria-label="Guide sections">
+  <button type="button" class="tab is-active" data-view="tracker">Tracker</button>
+  <button type="button" class="tab" data-view="roadmap">Roadmap to Platinum</button>
+  <button type="button" class="tab" data-view="missables">Missables</button>
+</nav>
+<main>
+  <section id="trackerView" class="view is-visible" aria-label="Trophy tracker">
+    <div class="toolbar">
+      <label class="field field-search">Search <input id="search" type="search" placeholder="Trophy name or description…" autocomplete="off"></label>
+      <label class="field">Grade
+        <select id="gradeFilter">
+          <option value="all">All grades</option>
+          <option value="platinum">Platinum</option>
+          <option value="gold">Gold</option>
+          <option value="silver">Silver</option>
+          <option value="bronze">Bronze</option>
+        </select>
+      </label>
+      <label class="field">Kind
+        <select id="kindFilter">
+          <option value="all">All kinds</option>
+          <option value="story">Story</option>
+          <option value="strangers">Strangers</option>
+          <option value="activities">Activities</option>
+          <option value="collectibles">Collectibles</option>
+          <option value="combat">Combat &amp; crime</option>
+          <option value="misc">Everything else</option>
+          <option value="completion">100% completion</option>
+          <option value="platinum">Platinum</option>
+        </select>
+      </label>
+      <label class="check"><input id="missableOnly" type="checkbox"> Missable only</label>
+      <label class="check"><input id="hideEarned" type="checkbox"> Hide earned</label>
+      <label class="check spoiler"><input id="spoilerToggle" type="checkbox"> Hide story spoilers</label>
+      <span class="spacer"></span>
+      <button id="exportBtn" type="button">Export progress</button>
+      <label class="import-btn">Import progress <input id="importFile" type="file" accept="application/json,.json"></label>
+    </div>
+    <p id="listCount" class="list-count" aria-live="polite"></p>
+    <div class="tracker-layout">
+      <ol id="trophyList" class="trophy-list"></ol>
+      <aside id="guidePane" class="guide-pane" aria-label="Trophy guide" aria-live="polite">
+        <p class="guide-empty">Select a trophy to read its guide.</p>
+      </aside>
+    </div>
+  </section>
+  <section id="roadmapView" class="view" aria-label="Roadmap to the platinum">
+    <h2>Roadmap to the platinum</h2>
+    <p class="lede">Six stages, in order. Story first — it unlocks the map, the activities and the contacts everything else needs. Story missions can be replayed, so no chapter trophy can be missed. The six trophies flagged as missable are in stage 2 and stage 5: do those when they come up, not later.</p>
+    <ol id="roadmapList" class="roadmap-list"></ol>
+  </section>
+  <section id="missablesView" class="view" aria-label="Missable trophies">
+    <h2>Missable trophies</h2>
+    <p class="lede">Six trophies read as one-time moments in their official descriptions, so this guide treats them as missable. Each one says so plainly, and none of them is confirmed in the game yet — the game launched days ago and these calls are our reading of the official descriptions. Everything else on the list can be earned after the story, at your own pace.</p>
+    <p class="lede">Story missions themselves are replayable: chapter and mission trophies cannot be missed, and neither can anything tied to an activity, a collectible or a shop that stays open.</p>
+    <ol id="missableList" class="missable-list"></ol>
+  </section>
+</main>
+<footer class="colophon">
+  <h2>Sources &amp; honesty notes</h2>
+  <ul>
+    <li>Trophy names, descriptions and grades: the official PlayStation 5 list, as published by <a href="https://www.exophase.com/game/grand-theft-auto-vi-psn/trophies/" target="_blank" rel="noopener">Exophase</a> (55 trophies: 1 platinum, 2 gold, 6 silver, 46 bronze; 28 hidden on PlayStation until earned).</li>
+    <li>PSN progress targets (such as the 42 Shooting Range challenges): <a href="https://psnprofiles.com/trophies/43531-grand-theft-auto-vi" target="_blank" rel="noopener">PSNProfiles</a>.</li>
+    <li>Every guide on this page is our own reading of the official descriptions, written for this guide — not yet verified in the game. Where a place or step is not pinned down, the guide says so instead of guessing.</li>
+    <li>Unofficial fan guide. Not affiliated with, endorsed by, or connected to Rockstar Games or PlayStation. No Rockstar logo or official artwork is used here.</li>
+    <li>Your checklist is saved only in this browser (localStorage). Export it to keep a backup, or import it on another machine. This page makes no network requests of its own.</li>
+  </ul>
+</footer>
 <script type="module" src="app.js"></script>
 </body>
 </html>
