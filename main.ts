@@ -1,19 +1,37 @@
 // Leonida Platinum — entrypoint for gta6-trophy-guide-01.
-// Own code, written for this entry. Copies app/ and screenshots/ from this
-// repository into the output directory and writes /output/dossier.json with
-// buildDossier from vendor/makefun-frontend.ts. Outside the grader,
-// MAKEFUN_OUTPUT_DIR stands in for /output. Deterministic: the same input
-// writes the same bytes on every run.
+//
+// This program hands the guide in: it copies the guide's app/ folder and its
+// screenshots/ folder from beside this file into the output directory, then
+// writes the dossier.json the judge reads, using the vendored make.fun
+// library. Outside the grader, MAKEFUN_OUTPUT_DIR stands in for /output:
+//
+//   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
+//
+// The output directory is left alone as a directory: only what sits inside
+// it is cleared first. In the grader /output is a mounted volume, and asking
+// the filesystem to remove the mount point itself fails, so the program
+// empties the folder instead of deleting it. The same input always writes
+// the same bytes, so two runs come out identical.
 
-import { cpSync, existsSync, mkdirSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
+import {
+  cpSync,
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildDossier } from "./vendor/makefun-frontend.ts";
 
-const REPO_ROOT = dirname(fileURLToPath(import.meta.url));
-const OUTPUT_DIR = process.env.MAKEFUN_OUTPUT_DIR || "/output";
+const repoDir = dirname(fileURLToPath(import.meta.url));
+const outDir = process.env.MAKEFUN_OUTPUT_DIR || "/output";
 
-const CAPS = {
+// The scorer's own caps (reference/gate.json): only text_max_bytes shapes
+// the bytes; the others refuse an entry the gate rejects.
+const caps = {
   text_max_bytes: 163840,
   screenshots: { max: 4, max_bytes: 262144 },
   app_max_files: 993,
@@ -21,33 +39,52 @@ const CAPS = {
   app_path_max_bytes: 1000,
 };
 
-function copyTree(src: string, dest: string): void {
-  mkdirSync(dest, { recursive: true });
-  const names = readdirSync(src).sort();
-  for (const name of names) {
-    const from = join(src, name);
-    const to = join(dest, name);
-    if (statSync(from).isDirectory()) copyTree(from, to);
-    else cpSync(from, to);
+// Copy a folder and everything under it, one entry at a time, in sorted
+// order so the copy is deterministic.
+function copyFolder(fromDir, toDir) {
+  mkdirSync(toDir, { recursive: true });
+  for (const name of readdirSync(fromDir).sort()) {
+    const source = join(fromDir, name);
+    const target = join(toDir, name);
+    if (statSync(source).isDirectory()) copyFolder(source, target);
+    else cpSync(source, target);
   }
 }
 
-function main(): void {
-  const appDir = join(REPO_ROOT, "app");
-  const shotsDir = join(REPO_ROOT, "screenshots");
-  if (!existsSync(appDir)) throw new Error(`app/ not found under ${REPO_ROOT}`);
-  if (!existsSync(shotsDir)) throw new Error(`screenshots/ not found under ${REPO_ROOT}`);
-
-  rmSync(OUTPUT_DIR, { recursive: true, force: true });
-  mkdirSync(OUTPUT_DIR, { recursive: true });
-  copyTree(appDir, join(OUTPUT_DIR, "app"));
-  copyTree(shotsDir, join(OUTPUT_DIR, "screenshots"));
-
-  const dossier = buildDossier(OUTPUT_DIR, CAPS);
-  writeFileSync(join(OUTPUT_DIR, "dossier.json"), dossier);
-  const appEntries = readdirSync(join(OUTPUT_DIR, "app")).length;
-  const shotEntries = readdirSync(join(OUTPUT_DIR, "screenshots")).length;
-  console.log(`wrote ${OUTPUT_DIR}/dossier.json (${dossier.length} bytes) from ${appEntries} app entries and ${shotEntries} screenshots`);
+// Empty a directory without removing the directory itself, so a mounted
+// output folder stays put while its old contents go away.
+function emptyFolder(folder) {
+  mkdirSync(folder, { recursive: true });
+  for (const name of readdirSync(folder)) {
+    rmSync(join(folder, name), { recursive: true, force: true });
+  }
 }
 
-main();
+function run() {
+  const appFolder = join(repoDir, "app");
+  const shotsFolder = join(repoDir, "screenshots");
+  if (!existsSync(appFolder)) {
+    throw new Error(`app/ not found under ${repoDir}`);
+  }
+  if (!existsSync(shotsFolder)) {
+    throw new Error(`screenshots/ not found under ${repoDir}`);
+  }
+
+  emptyFolder(outDir);
+  copyFolder(appFolder, join(outDir, "app"));
+  copyFolder(shotsFolder, join(outDir, "screenshots"));
+
+  const dossier = buildDossier(outDir, caps);
+  const dossierPath = join(outDir, "dossier.json");
+  writeFileSync(dossierPath, dossier);
+  if (statSync(dossierPath).size !== dossier.length) {
+    throw new Error(`dossier.json did not land whole under ${outDir}`);
+  }
+  const appCount = readdirSync(join(outDir, "app")).length;
+  const shotCount = readdirSync(join(outDir, "screenshots")).length;
+  console.log(
+    `wrote ${outDir}/dossier.json (${dossier.length} bytes) from ${appCount} app entries and ${shotCount} screenshots`,
+  );
+}
+
+run();
